@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]          # fires when you push a version tag, e.g. v1.16.2
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v1.16.2)"
+        required: true
+
+permissions:
+  contents: write          # needed to create the release + upload the asset
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Resolve tag
+        id: tag
+        run: echo "tag=${{ github.event.inputs.tag || github.ref_name }}" >> "$GITHUB_OUTPUT"
+
+      - name: Create release and upload bundle
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" auto-entities.js --clobber
+          else
+            gh release create "$TAG" auto-entities.js \
+              --target "${{ github.sha }}" \
+              --title "$TAG" \
+              --generate-notes
+          fi
