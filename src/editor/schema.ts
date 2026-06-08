@@ -243,16 +243,23 @@ export const cardOptionsSchema = [
     type: "grid",
     name: "",
     schema: [
-      {
-        name: "show_empty",
-        type: "boolean",
-        label: "Show if empty",
-      },
-      {
-        name: "card_param",
-        type: "string",
-        label: "Parameter to populate",
-      },
+      { name: "show_empty", type: "boolean", label: "Show if empty" },
+      { name: "card_param", type: "string", label: "Parameter to populate" },
     ],
+  },
+  { type: "constant", name: "Separators:", value: "" },
+  {
+    type: "grid",
+    name: "",
+    schema: [
+      { name: "separator", type: "boolean", label: "Between cards" },
+      { name: "separator_top", type: "boolean", label: "Top of first" },
+      { name: "separator_bottom", type: "boolean", label: "Bottom of last" },
+    ],
+  },
+  {
+    name: "separator_style",
+    type: "string",
+    label: "Separator border (CSS, optional)",
   },
 ];
