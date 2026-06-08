@@ -193,6 +193,49 @@ class AutoEntities extends LitElement {
       await this.updateComplete;
       (this.card as any).requestUpdate();
     }
+
+    await this._apply_separators();
+  }
+
+  async _apply_separators() {
+    const card: any = this.card;
+    try {
+      await card?.updateComplete;
+    } catch (_) {}
+    const root: ShadowRoot | undefined = card?.shadowRoot;
+    if (!root) return;
+
+    const existing = root.querySelector(
+      "style#auto-entities-separators"
+    ) as HTMLStyleElement | null;
+
+    if (!this._config.separator) {
+      existing?.remove();
+      return;
+    }
+
+    const border =
+      this._config.separator_style ?? "1px solid var(--divider-color)";
+    const selector = this._config.separator_selector ?? "#root > *";
+
+    const rules = [
+      `${selector}:not(:last-child){border-bottom:${border};}`,
+      this._config.separator_top
+        ? `${selector}:first-child{border-top:${border};}`
+        : "",
+      this._config.separator_bottom
+        ? `${selector}:last-child{border-bottom:${border};}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const styleEl = existing ?? document.createElement("style");
+    if (!existing) {
+      styleEl.id = "auto-entities-separators";
+      root.appendChild(styleEl);
+    }
+    styleEl.textContent = rules;
   }
 
   async update_entities() {
