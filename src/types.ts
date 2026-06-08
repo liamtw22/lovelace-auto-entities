@@ -55,6 +55,13 @@ export interface AutoEntitiesConfig {
   unique?: boolean | string;
   sort?: any;
 
+  // Separators between generated cards (works with stack/grid children)
+  separator?: boolean;
+  separator_top?: boolean;      // also draw a line above the first card
+  separator_bottom?: boolean;   // also draw a line below the last card
+  separator_style?: string;     // CSS border value, default "1px solid var(--divider-color)"
+  separator_selector?: string;  // child selector, default "#root > *"
+
   entity_ids?: any[];
 }
 
